@@ -813,7 +813,7 @@ main() {
 	# Neme lazım.
 	if DISTRO="$(lsb_release -si 2>/dev/null)"; then
 		case "$DISTRO" in
-		[Dd]ebian|[Uu]buntu) ;;
+		[Dd]ebian|[Uu]buntu|*[Mm]int) ;;
 		*) die "Üzgünüm '$DISTRO' desteklenmiyor veya tanımlı değil." ;;
 		esac
 	else
