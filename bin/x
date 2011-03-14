@@ -1665,7 +1665,7 @@ go() {
 		    "Bunları kontrol edin."
 	fi
 
-	moo="Kurulum tamamlandı!  Oturumu yeniden başlatın."
+	moo="Kurulum tamamlandı!  Lütfen bilgisayarı yeniden başlatın."
 	if [ -n "$DISPLAY" ] && [ -x "/usr/games/xcowsay" ]; then
 		local image opts
 		if [ -x /usr/bin/pngtopnm ] &&
