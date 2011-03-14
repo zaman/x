@@ -1544,6 +1544,13 @@ go() {
 	for f in $(ls -A .); do
 		local target skel
 		target="${DESTDIR}/${f}"
+		# uç durum: bogus izinli dosya/dizinleri düzelt
+		if [ -e "$target" ] && [ ! -w "$target" ]; then
+			cry "${target} dosya/dizininin hatalı" \
+			    "izinleri düzeltilecek..."
+			sudoattempt
+			sudo chown ${USER:=$(id -u)}: "$target"
+		fi
 		if [ -f "$target" ] || [ -L "$target" ]; then
 			skel="/etc/skel/${f}"
 			if {
