@@ -1025,10 +1025,10 @@ ensure_visible_colors() {
 	esac
 
 	case "$DISTRO" in
-	[Uu]buntu)
+	ubuntu)
 		notok=0 # hayır
 		;;
-	[Dd]ebian)
+	debian)
 		notok=1 # kesin
 		;;
 	*)
@@ -1692,15 +1692,29 @@ main() {
 	tty -s || tty -s </dev/tty ||
 		die "Uygun bir uçbirimde çalışmıyorsunuz"
 
-	# Neme lazım.
-	if DISTRO="$(lsb_release -si 2>/dev/null)"; then
-		case "$DISTRO" in
-		[Dd]ebian|[Uu]buntu|*[Mm]int) ;;
-		*) die "Üzgünüm '$DISTRO' desteklenmiyor veya tanımlı değil." ;;
+	case "$OSTYPE" in
+	*linux*)
+		case "$(cat /etc/issue 2>/dev/null)" in
+		*[Uu]buntu*)
+			DISTRO=ubuntu
+			;;
+		*[Dd]ebian*)
+			DISTRO=debian
+			;;
+		*[Mm]int*)
+			DISTRO=mint
+			;;
+		*)
+			DISTRO=unsupported
+			die "Üzgünüm bu dağıtım şimdilik desteklenmiyor."
+			;;
 		esac
-	else
+		;;
+	*)
 		die "Üzgünüm şimdilik sadece Linux destekleniyor."
-	fi
+		;;
+	esac
+
 	readonly DISTRO
 
 	# Debian ve başka bazı dağıtımlarda gnome-terminal öntanımlı olarak
