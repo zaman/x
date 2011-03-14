@@ -22,6 +22,7 @@ htop
 iselect
 less
 libyaml-tiny-perl
+lsb-release
 lsof
 mc
 moreutils
