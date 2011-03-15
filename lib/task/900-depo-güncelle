@@ -2,6 +2,8 @@
 
 [ -z "$X" ] || cd "$X"
 
+say "Depo güncelleniyor..."
+
 prev=$(git show --format='format:%H' HEAD ||:)
 if git pull upstream master; then
 	case "$(git show --format='format:%H' HEAD)" in
