@@ -10,7 +10,7 @@ if git pull upstream master; then
 		;;
 	*)
 		cry "Üst depodaki değişiklikler alındı."
-		if yesno "Depo değişiklikleri ana depoya gönderilsin mi? " e; then
+		if yesno "Depo değişiklikleri ana depoya gönderilsin mi?" e; then
 			git push --all
 		fi
 		;;
