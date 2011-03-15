@@ -4,13 +4,13 @@
 
 prev=$(git show --format='format:%H' HEAD ||:)
 if git pull upstream master; then
-	case "$(git show --format='format:%H' HEAD)"
+	case "$(git show --format='format:%H' HEAD)" in
 	$prev)
 		cry "Üst depoda değişiklik yok."
 		;;
 	*)
 		cry "Üst depodaki değişiklikler alındı."
-		if yesno "Depo değişiklikleri ana depoua gönderilsin mi? " e; then
+		if yesno "Depo değişiklikleri ana depoya gönderilsin mi? " e; then
 			git push --all
 		fi
 		;;
