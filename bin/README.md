@@ -12,7 +12,7 @@
 
         gistpaste
 
-- Dobrica Pavlinusic <dpavlin@rot13.org>
+- Dobrica Pavlinusic
 
         apt-iselect
 
