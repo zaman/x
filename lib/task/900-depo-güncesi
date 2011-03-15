@@ -1,8 +1,6 @@
 #!/bin/bash
 
-if [ -n "$X_REPOSITORY" ]; then
-	cd "$X_REPOSITORY"
-fi
+[ -z "$X" ] || cd "$X"
 
 hascommand tig && exec tig
 git log --graph --decorate --pretty=oneline --abbrev-commit

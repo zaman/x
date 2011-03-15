@@ -1,8 +1,6 @@
 #!/bin/bash
 
-if [ -n "$X_REPOSITORY" ]; then
-	cd "$X_REPOSITORY"
-fi
+[ -z "$X" ] || cd "$X"
 
 cry "DİKKAT!  Bu işlem depoda kaydedilmemiş tüm değişiklikleri siler!"
 yesno "Devam edilsin mi?" h && git reset --hard
