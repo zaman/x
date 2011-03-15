@@ -2,38 +2,38 @@
 
 - Anonymous
 
-	git-new-workdir
+        git-new-workdir
 
 - Chris Wanstrath
 
-	hub
+        hub
 
 - David Blevins
 
-	gistpaste
+        gistpaste
 
 - Dobrica Pavlinusic <dpavlin@rot13.org>
 
-	apt-iselect
+        apt-iselect
 
 - Emre Sevinç
 
-	wman
+        wman
 
 - Joey Hess
 
-	editmail
-	loadcron
+        editmail
+        loadcron
 
 - Markus Prinz
 
-	git-promote
-	git-track
-	git-retrack
-	git-up
-	git-wtf
-	urlmonitor
+        git-promote
+        git-track
+        git-retrack
+        git-up
+        git-wtf
+        urlmonitor
 
 - Scott Bronson
 
-	vim-update-bundles
+        vim-update-bundles
