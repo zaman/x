@@ -3,7 +3,6 @@
 set -e
 
 LOCALESDIR=/usr/share/i18n/locales
-MYSQLCONFDIR=/etc/mysql/conf.d
 
 AREA=Europe
 ZONE=Istanbul
@@ -116,24 +115,5 @@ dpkg-reconfigure --force tzdata 2>/dev/null ||:
 # Konsol.
 echo >&2 "Konsol yapılandırılıyor..."
 dpkg-reconfigure --force console-setup 2>/dev/null ||:
-
-# Diğer Türkçe dokunuşlar.
-if [ -n "$IS_HEADLESS" ] || [ -d "$MYSQLCONFDIR" ]; then
-	# MySQL'de öntanımlı UTF-8 desteğine rağmen ortaya çıkan saçma sapan
-	# UTF-8 problemlerinden bıktık.
-	if ! [ -f $MYSQLCONFDIR/utf8.cnf ]; then
-		echo >&2 "MySQL UTF-8 ayarları iyileştiriliyor..."
-		mkdir -p $MYSQLCONFDIR
-		cat >$MYSQLCONFDIR/utf8.cnf <<'EOF'
-[mysqld]
-init_connect='SET collation_connection = utf8_general_ci'
-init_connect='SET NAMES utf8'
-default-character-set=utf8
-character-set-server=utf8
-collation-server=utf8_general_ci
-skip-character-set-client-handshake
-EOF
-	fi
-fi
 
 echo >&2 "Sistem yereli $X_LANG olarak ayarlandı."
