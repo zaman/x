@@ -38,7 +38,7 @@ wwwconfig-common
 
 if anyattr gui; then
 	cry "Bu bir masaüstü sistem gibi görünüyor. " \
-	    "Böyle bir sisteme sunucu kurmamalısınız?"
+	    "Böyle bir sisteme sunucu kurmamalısınız."
 	if ! yesno "Yine de devam edilsin mi?" h; then
 		cry "Güzel!"
 		exit
