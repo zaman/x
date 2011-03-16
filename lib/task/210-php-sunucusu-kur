@@ -1,0 +1,68 @@
+#!/bin/bash
+
+DEB_BASE="
+apache2-utils
+automysqlbackup
+ca-certificates
+dish
+etckeeper
+ethtool
+ipcalc
+libexpat1
+memcached
+mime-support
+mysql-client
+mysql-server
+nfs-server
+nginx-extras
+ntp
+p7zip
+php5-cgi
+php5-curl
+php5-fpm
+php5-gd
+php5-imagick
+php5-mcrypt
+php5-memcache
+php5-mysql
+php5-sqlite
+php5-suhosin
+php5-xmlrpc
+php5-xsl
+php-apc
+pssh
+sqlite3
+ssl-cert
+wwwconfig-common
+"
+
+if anyattr gui; then
+	cry "Bu bir masaüstü sistem gibi görünüyor. " \
+	    "Böyle bir sisteme sunucu kurmamalısınız?"
+	if ! yesno "Yine de devam edilsin mi?" h; then
+		cry "Güzel!"
+		exit
+	fi
+fi
+
+sudoattempt
+
+if [ -z "$HAS_APT_UPDATED" ]; then
+	say "Paket indeksleri güncelleniyor..."
+	xaptitude update ||:
+fi
+
+try=2
+while [ $try -gt 0 ]; do
+	err=0
+
+	say "Temel Deb paketleri kuruluyor..."
+	xaptitude install $DEB_BASE || err=$?
+
+	# hata yoksa çık
+	[ $err -ne 0 ] || break
+
+	cry "Bazı Deb paketlerin kurulumunda hata oluştu. " \
+	    "Tekrar denenerek kuruluma devam edilecek..."
+	try=$(($try - 1))
+done
