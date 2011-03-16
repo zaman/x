@@ -9,15 +9,22 @@ hascommand mysql || ensuredeb mysql-client
 
 dbadmin=${WWWCONFIG_COMMON_DBADMIN:-root}
 
+[ -z "$1" ] || dbname="$1"
+[ -z "$1" ] || dbuser="$2"
+
 while :; do
 	asksecret "Mysql yönetici (root) parolası"
 	dbadmpass="$REPLY"
 
-	ask "Veritabanı ismi (Örnek: 'moodle', 'wp')" "" must-non-empty
-	dbname="$REPLY"
+	if [ -z "$dbname" ]; then
+		ask "Veritabanı ismi (Örnek: 'moodle', 'wp')" "" must-non-empty
+		dbname="$REPLY"
+	fi
 
-	ask "Veritabanı kullanıcısı (Veritabanı ismi ile aynı olması önerilir)" "$dbname" must-non-empty
-	dbuser="$REPLY"
+	if [ -z "$dbuser" ]; then
+		ask "Veritabanı kullanıcısı (Veritabanı ismi ile aynı olması önerilir)" "$dbname" must-non-empty
+		dbuser="$REPLY"
+	fi
 
 	asksecret "'$dbuser' veritabanı kullanıcı için parola" ""
 
@@ -26,6 +33,8 @@ while :; do
 		export dbadmin dbadmpass dbname dbuser
 		break
 	fi
+
+	unset dbname dbuser
 done
 
 (
