@@ -69,6 +69,9 @@ if [ -n "$MKDB" ]; then
 		fi
 	) || die "'$dbname' isimli veritabanı oluşturulamadı."
 elif [ -n "$RMDB" ];  then
+	cry "\nDİKKAT!  Veritabanı/kullanıcı çifti silinecek!"
+	yesno "Emin misiniz?" h || exit
+
 	(
 		. /usr/share/wwwconfig-common/mysql-dropdb.sh
 		if [ "$status" = "error" ]; then
