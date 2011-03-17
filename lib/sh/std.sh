@@ -342,7 +342,7 @@ asksecret() {
 		[ $# -gt 1 ] || break
 
 		entered="$REPLY"
-		asksecret_ "${onverify:=Tekrar girin}"
+		asksecret_ "${onverify:=Doğrulamak için tekrar girin}"
 
 		case "$REPLY" in
 		"$entered")
