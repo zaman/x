@@ -27,10 +27,11 @@ while :; do
 	fi
 
 	asksecret "'$dbuser' veritabanı kullanıcı için parola" ""
+	dbpass="$REPLY"
 
 	cry "\nBu girdilerle devam edilecek:\n\n\tVeritabanı: $dbname\n\tKullanıcı: $dbuser\n"
 	if yesno "Onaylıyor musunuz?" e; then
-		export dbadmin dbadmpass dbname dbuser
+		export dbadmin dbadmpass dbname dbuser dbpass
 		break
 	fi
 
