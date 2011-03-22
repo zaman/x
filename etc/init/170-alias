@@ -31,8 +31,8 @@ alias df='df -kTh'
 # "rm" komutu "-f" kullanılmadığı sürece güvenli.
 alias rm='rm -i'
 
-# Sudo.
-alias ~='sudo'
+# Uzun (ve önerilmeyen) sudo oturumları için.
+alias ~='sudo -E -s'
 
 # "cd" kısayolları.
 alias ..='cd ..'

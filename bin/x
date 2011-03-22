@@ -490,7 +490,7 @@ hasolddeb() {
 # verilen deb paketlerinin kurulu olduğuna emin ol
 ensuredeb() {
 	local missing=$(missingdeb "$@")
-	[ -z "$missing" ] || die "Devam etmeniz için şu paketlerin kurulması gerekiyor: " $missing
+	[ -z "$missing" ] || die "Devam etmeniz için şu paketlerin kurulması gerekiyor:" $missing
 }
 
 # verilen ruby gem paketlerinin kurulu olduğuna emin ol
@@ -610,33 +610,80 @@ isinteractive() {
 # öntanımlı değeri bekleterek kullanıcıdan girdi iste
 ask() {
 	local prompt="$1"
+	local default="$2"
+	local validate="$3"
 
-	unset REPLY
-	if [ $# -gt 1 ]; then
-		local default="$2"
-		printf "${CO_HILITE}${prompt} ${CO_NORMAL}[${CO_BRACKET}$default${CO_NORMAL}]? "
-		read -e REPLY </dev/tty
-		[ -n "$REPLY" ] || REPLY="$default"
-	else
-		printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
-		read -e REPLY </dev/tty
-	fi
+	must-non-empty() {
+		if [ -z "$REPLY" ]; then
+			printf "${CO_BAD}Girdi boş olmamalı.${CO_NORMAL}\n"
+			return 1
+		fi
+	}
 
-	# answer is in REPLY
+	while :; do
+		unset REPLY
+
+		if [ -n "$default" ]; then
+			printf "${CO_HILITE}${prompt} ${CO_NORMAL}[${CO_BRACKET}$default${CO_NORMAL}]? "
+			read -e REPLY </dev/tty
+			[ -n "$REPLY" ] || REPLY="$default"
+		else
+			printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
+			read -e REPLY </dev/tty
+		fi
+
+		if declare -F "$validate" >/dev/null && ! $validate; then
+			continue
+		fi
+
+		break
+	done
+
+	# cevap REPLY değişkeninde
 }
 
-# güvenli şekilde parola sor
+# doğrulayarak güvenli şekilde parola sor
 asksecret() {
 	local prompt="$1"
+	local onverify="$2"
+	local entered
 
-	unset REPLY
-	printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
-	stty -echo </dev/tty
-	read -e REPLY </dev/tty
-	stty echo </dev/tty
-	printf "\n"
+	asksecret_() {
+		local prompt="$1"
 
-	# answer is in REPLY
+		unset REPLY
+
+		printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
+		stty -echo </dev/tty
+		read -e REPLY </dev/tty
+		stty echo </dev/tty
+		printf "\n"
+	}
+
+	while :; do
+		asksecret_ "$prompt"
+		if [ -z "$REPLY" ]; then
+			printf "${CO_BAD}Boş girdi; lütfen tekrar deneyin.${CO_NORMAL}\n"
+			continue
+		fi
+
+		# doğrulama istenmiyorsa çık
+		[ $# -gt 1 ] || break
+
+		entered="$REPLY"
+		asksecret_ "${onverify:=Doğrulamak için tekrar girin}"
+
+		case "$REPLY" in
+		"$entered")
+			break
+			;;
+		*)
+			printf "${CO_BAD}Doğrulama hatası, lütfen tekrar deneyin.${CO_NORMAL}\n"
+			;;
+		esac
+	done
+
+	# cevap REPLY değişkeninde
 }
 
 # öntanımlı cevabı bekleterek kullanıcıya evet/hayır sor
@@ -1025,10 +1072,10 @@ ensure_visible_colors() {
 	esac
 
 	case "$DISTRO" in
-	[Uu]buntu)
+	ubuntu)
 		notok=0 # hayır
 		;;
-	[Dd]ebian)
+	debian)
 		notok=1 # kesin
 		;;
 	*)
@@ -1544,6 +1591,13 @@ go() {
 	for f in $(ls -A .); do
 		local target skel
 		target="${DESTDIR}/${f}"
+		# uç durum: bogus izinli dosya/dizinleri düzelt
+		if [ -e "$target" ] && [ ! -w "$target" ]; then
+			cry "${target} dosya/dizininin hatalı" \
+			    "izinleri düzeltilecek..."
+			sudoattempt
+			sudo chown ${USER:=$(id -u)}: "$target"
+		fi
 		if [ -f "$target" ] || [ -L "$target" ]; then
 			skel="/etc/skel/${f}"
 			if {
@@ -1665,7 +1719,7 @@ go() {
 		    "Bunları kontrol edin."
 	fi
 
-	moo="Kurulum tamamlandı!  Oturumu yeniden başlatın."
+	moo="Kurulum tamamlandı!  Lütfen bilgisayarı yeniden başlatın."
 	if [ -n "$DISPLAY" ] && [ -x "/usr/games/xcowsay" ]; then
 		local image opts
 		if [ -x /usr/bin/pngtopnm ] &&
@@ -1692,15 +1746,29 @@ main() {
 	tty -s || tty -s </dev/tty ||
 		die "Uygun bir uçbirimde çalışmıyorsunuz"
 
-	# Neme lazım.
-	if DISTRO="$(lsb_release -si 2>/dev/null)"; then
-		case "$DISTRO" in
-		[Dd]ebian|[Uu]buntu) ;;
-		*) die "Üzgünüm '$DISTRO' desteklenmiyor veya tanımlı değil." ;;
+	case "$OSTYPE" in
+	*linux*)
+		case "$(cat /etc/issue 2>/dev/null)" in
+		*[Uu]buntu*)
+			DISTRO=ubuntu
+			;;
+		*[Dd]ebian*)
+			DISTRO=debian
+			;;
+		*[Mm]int*)
+			DISTRO=mint
+			;;
+		*)
+			DISTRO=unsupported
+			die "Üzgünüm bu dağıtım şimdilik desteklenmiyor."
+			;;
 		esac
-	else
+		;;
+	*)
 		die "Üzgünüm şimdilik sadece Linux destekleniyor."
-	fi
+		;;
+	esac
+
 	readonly DISTRO
 
 	# Debian ve başka bazı dağıtımlarda gnome-terminal öntanımlı olarak

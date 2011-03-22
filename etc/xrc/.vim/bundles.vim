@@ -24,6 +24,7 @@
 " Bundle: git://github.com/vim-scripts/gmcs.vim.git
 " Bundle: git://github.com/vim-scripts/IndexedSearch.git
 " Bundle: git://github.com/vim-scripts/indentpython.git
+" Bundle: git://github.com/vim-scripts/JSON.vim.git
 " Bundle: git://github.com/vim-scripts/localvimrc.git
 " Bundle: git://github.com/vim-scripts/matchit.zip.git
 " Bundle: git://github.com/vim-scripts/nginx.vim.git

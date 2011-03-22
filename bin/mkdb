@@ -1,0 +1,92 @@
+#!/bin/bash
+
+use std
+
+PROGNAME=${0##*/}
+
+ensuredeb wwwconfig-common
+hascommand mysql || ensuredeb mysql-client
+
+dbadmin=${WWWCONFIG_COMMON_DBADMIN:-root}
+
+[ -z "$1" ] || dbname="$1"
+[ -z "$1" ] || dbuser="$2"
+
+case "${PROGNAME#x-}" in
+mk*|make*|create*)
+	cry "Veritabanı/kullanıcı çifti oluşturulacak..."
+	MKDB=yes
+	;;
+rm*|remove*|drop*)
+	cry "Veritabanı/kullanıcı çifti silinecek..."
+	RMDB=yes
+	;;
+*)
+	bug "Ne yapmamı bekliyorsun?"
+	;;
+esac
+
+while :; do
+	asksecret "Mysql yönetici (root) parolası"
+	dbadmpass="$REPLY"
+
+	if [ -z "$dbname" ]; then
+		ask "Veritabanı ismi (Örnek: 'moodle', 'wp')" "" must-non-empty
+		dbname="$REPLY"
+	fi
+
+	if [ -z "$dbuser" ]; then
+		ask "Veritabanı kullanıcısı (Veritabanı ismi ile aynı olması önerilir)" "$dbname" must-non-empty
+		dbuser="$REPLY"
+	fi
+
+	asksecret "'$dbuser' veritabanı kullanıcı için parola" ${MKDB+""}
+	dbpass="$REPLY"
+
+	cry "\nBu girdilerle devam edilecek:\n\n\tVeritabanı: $dbname\n\tKullanıcı: $dbuser\n"
+	if yesno "Onaylıyor musunuz?" e; then
+		export dbadmin dbadmpass dbname dbuser dbpass
+		break
+	fi
+
+	unset dbname dbuser
+done
+
+if [ -n "$MKDB" ]; then
+	(
+		. /usr/share/wwwconfig-common/mysql-createuser.sh
+		if [ "$status" = "error" ]; then
+			echo >&2 "$error"
+			exit 1
+		fi
+	) || die "'$dbuser' isimli veritabanı kullanıcısı oluşturulamadı."
+
+	(
+		. /usr/share/wwwconfig-common/mysql-createdb.sh
+		if [ "$status" = "error" ]; then
+			echo >&2 "$error"
+			exit 1
+		fi
+	) || die "'$dbname' isimli veritabanı oluşturulamadı."
+elif [ -n "$RMDB" ];  then
+	cry "\nDİKKAT!  Veritabanı/kullanıcı çifti silinecek!"
+	yesno "Emin misiniz?" h || exit
+
+	(
+		. /usr/share/wwwconfig-common/mysql-dropdb.sh
+		if [ "$status" = "error" ]; then
+			echo >&2 "$error"
+			exit 1
+		fi
+	) || die "'$dbname' isimli veritabanı silinemedi."
+
+	(
+		. /usr/share/wwwconfig-common/mysql-dropuser.sh
+		if [ "$status" = "error" ]; then
+			echo >&2 "$error"
+			exit 1
+		fi
+	) || die "'$dbuser' isimli veritabanı kullanıcısı silinemedi."
+else
+	bug "Ne yapmamı bekliyorsun?"
+fi

@@ -4,6 +4,8 @@ bind editor "\e<backspace>" kill-word
 
 # Map delete-char to a sane value
 bind editor <delete> delete-char
+# Try to complete with query on Tab
+bind	editor	"<tab>"	complete-query
 
 #bind pager <up> previous-line
 #bind pager <down> next-line

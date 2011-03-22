@@ -1,7 +1,23 @@
 #!/bin/bash
 
-if [ -n "$X_REPOSITORY" ]; then
-	cd "$X_REPOSITORY"
-fi
+[ -z "$X" ] || cd "$X"
 
-git pull upstream master
+say "Depo güncelleniyor..."
+
+prev=$(git show --format='format:%H' HEAD ||:)
+if git pull upstream master; then
+	case "$(git show --format='format:%H' HEAD)" in
+	$prev)
+		cry "Üst depoda değişiklik yok."
+		;;
+	*)
+		cry "Üst depodaki değişiklikler alındı."
+		if yesno "Depo değişiklikleri ana depoya gönderilsin mi?" e; then
+			git push --all
+		fi
+		;;
+	esac
+else
+	cry "Depo güncellemesinde hata oluştu.  Lütfen tekrar denemeden" \
+	    "önce hata iletilerini inceleyerek sorunu giderin."
+fi

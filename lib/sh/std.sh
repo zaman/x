@@ -161,7 +161,7 @@ hasolddeb() {
 # verilen deb paketlerinin kurulu olduğuna emin ol
 ensuredeb() {
 	local missing=$(missingdeb "$@")
-	[ -z "$missing" ] || die "Devam etmeniz için şu paketlerin kurulması gerekiyor: " $missing
+	[ -z "$missing" ] || die "Devam etmeniz için şu paketlerin kurulması gerekiyor:" $missing
 }
 
 # verilen ruby gem paketlerinin kurulu olduğuna emin ol
@@ -281,33 +281,80 @@ isinteractive() {
 # öntanımlı değeri bekleterek kullanıcıdan girdi iste
 ask() {
 	local prompt="$1"
+	local default="$2"
+	local validate="$3"
 
-	unset REPLY
-	if [ $# -gt 1 ]; then
-		local default="$2"
-		printf "${CO_HILITE}${prompt} ${CO_NORMAL}[${CO_BRACKET}$default${CO_NORMAL}]? "
-		read -e REPLY </dev/tty
-		[ -n "$REPLY" ] || REPLY="$default"
-	else
-		printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
-		read -e REPLY </dev/tty
-	fi
+	must-non-empty() {
+		if [ -z "$REPLY" ]; then
+			printf "${CO_BAD}Girdi boş olmamalı.${CO_NORMAL}\n"
+			return 1
+		fi
+	}
 
-	# answer is in REPLY
+	while :; do
+		unset REPLY
+
+		if [ -n "$default" ]; then
+			printf "${CO_HILITE}${prompt} ${CO_NORMAL}[${CO_BRACKET}$default${CO_NORMAL}]? "
+			read -e REPLY </dev/tty
+			[ -n "$REPLY" ] || REPLY="$default"
+		else
+			printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
+			read -e REPLY </dev/tty
+		fi
+
+		if declare -F "$validate" >/dev/null && ! $validate; then
+			continue
+		fi
+
+		break
+	done
+
+	# cevap REPLY değişkeninde
 }
 
-# güvenli şekilde parola sor
+# doğrulayarak güvenli şekilde parola sor
 asksecret() {
 	local prompt="$1"
+	local onverify="$2"
+	local entered
 
-	unset REPLY
-	printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
-	stty -echo </dev/tty
-	read -e REPLY </dev/tty
-	stty echo </dev/tty
-	printf "\n"
+	asksecret_() {
+		local prompt="$1"
 
-	# answer is in REPLY
+		unset REPLY
+
+		printf "${CO_HILITE}${prompt}${CO_NORMAL}? "
+		stty -echo </dev/tty
+		read -e REPLY </dev/tty
+		stty echo </dev/tty
+		printf "\n"
+	}
+
+	while :; do
+		asksecret_ "$prompt"
+		if [ -z "$REPLY" ]; then
+			printf "${CO_BAD}Boş girdi; lütfen tekrar deneyin.${CO_NORMAL}\n"
+			continue
+		fi
+
+		# doğrulama istenmiyorsa çık
+		[ $# -gt 1 ] || break
+
+		entered="$REPLY"
+		asksecret_ "${onverify:=Doğrulamak için tekrar girin}"
+
+		case "$REPLY" in
+		"$entered")
+			break
+			;;
+		*)
+			printf "${CO_BAD}Doğrulama hatası, lütfen tekrar deneyin.${CO_NORMAL}\n"
+			;;
+		esac
+	done
+
+	# cevap REPLY değişkeninde
 }
 
 # öntanımlı cevabı bekleterek kullanıcıya evet/hayır sor
