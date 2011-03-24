@@ -33,3 +33,7 @@ if exists("g:loaded_yaifa")
 	endfunction
 	au FileType * call s:unload_yaifa_on_blank_files()
 endif
+
+if exists("colors_name") && colors_name == "tir_black"
+	hi StatusLineNC guifg=black guibg=#202020 ctermfg=234 ctermbg=245
+endif
