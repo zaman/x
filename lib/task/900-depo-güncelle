@@ -8,9 +8,7 @@ origin_url="$(git config remote.origin.url 2>/dev/null ||:)"
 upstream_url="$(git config remote.upstream.url 2>/dev/null ||:)"
 
 say "Depo güncelleniyor..."
-say "\tUzak depo\t$origin_url"
-say "\tÜst depo\t$upstream_url"
-say ""
+printf "\tUzak depo\t$origin_url\n\tÜst depo\t$upstream_url\n"
 
 say "Yerel depo uzak depo ile eşzamanlanıyor..."
 prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
@@ -25,7 +23,7 @@ $prev)
 esac
 
 case "$origin_url" in
-git://git@*|https://*@*)
+git@*|https://*@*)
 	say "Üst depo değişiklikleri alınıyor..."
 	prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
 	git pull upstream master
