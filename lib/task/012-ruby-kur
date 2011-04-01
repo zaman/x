@@ -11,7 +11,7 @@ sudoattempt
 # bir nedenle sistemde bulunan alternatif artıklarını elle sil
 for p in ruby gem ri erb testrb rdoc; do
 	say "$p sistem alternatifleri (varsa) silinecek..."
-	sudo update-alternatives remove-all $p >/dev/null 2>&1 ||:
+	sudo update-alternatives --remove-all $p >/dev/null 2>&1 ||:
 done
 
 if [ -z "$HAS_APT_UPDATED" ]; then
