@@ -15,7 +15,6 @@ set infercase
 set laststatus=2
 set modeline
 set modelines=5
-set mouse=a
 set nobackup
 set noexpandtab
 set nofoldenable

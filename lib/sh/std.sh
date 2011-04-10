@@ -205,11 +205,10 @@ sudoattempt() {
 		if ! isprivileged; then
 			cry "Yönetici yetkisinde olan bir işlem yapmak üzeresiniz. " \
 			    "Fakat görüldüğü kadarıyla bu sistemde yöneticilerin dahil" \
-				"olduğu bir grupta değilsiniz."
+			    "olduğu bir grupta (ör. sudo, admin, wheel) değilsiniz."
 			if yesno "Buna rağmen yönetim yetkileri istemekte" \
-			         "kararlı mısınız?" h; then
-				die "Lütfen düşündüğünüz işlem için sistem yöneticilerine " \
-				    "başvurun.  İşleme son verildi."
+			         "kararlı mısınız (sudo parolası istenecek)?" h; then
+				die "İşleme son verildi."
 			fi
 		fi
 		sudostart

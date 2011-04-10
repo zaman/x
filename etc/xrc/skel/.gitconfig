@@ -25,8 +25,10 @@
 	re = reset --hard
 	r = remote
 	s = status -s
+	u = !gx-update
 	undo = reset --soft HEAD^
-	w = git wtf
+	update = !gx-update
+	w = !git-wtf
 [color]
 	ui = auto
 	branch = auto

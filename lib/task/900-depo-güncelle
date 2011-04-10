@@ -1,23 +1,44 @@
 #!/bin/bash
 
+set -e
+
 [ -z "$X" ] || cd "$X"
 
-say "Depo güncelleniyor..."
+origin_url="$(git config remote.origin.url 2>/dev/null ||:)"
+upstream_url="$(git config remote.upstream.url 2>/dev/null ||:)"
 
-prev=$(git show --format='format:%H' HEAD ||:)
-if git pull upstream master; then
-	case "$(git show --format='format:%H' HEAD)" in
+say "Depo güncelleniyor..."
+printf "\tUzak depo\t$origin_url\n\tÜst depo\t$upstream_url\n"
+
+say "Yerel depo uzak depo ile eşzamanlanıyor..."
+prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
+git pull origin master
+case "$(git show --format='format:%H' HEAD 2>/dev/null ||:)" in
+$prev)
+	cry "Değişiklik yok."
+	;;
+*)
+	cry "Uzak depodaki değişiklikler alındı."
+	;;
+esac
+
+case "$origin_url" in
+git@*|https://*@*)
+	say "Üst depo değişiklikleri alınıyor..."
+	prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
+	git pull upstream master
+	case "$(git show --format='format:%H' HEAD 2>/dev/null ||:)" in
 	$prev)
-		cry "Üst depoda değişiklik yok."
+		cry "Değişiklik yok."
 		;;
 	*)
-		cry "Üst depodaki değişiklikler alındı."
-		if yesno "Depo değişiklikleri ana depoya gönderilsin mi?" e; then
-			git push --all
-		fi
+		cry "Üst depodan alınan değişiklikler uzak depoya gönderiliyor..."
+		git push --all
 		;;
 	esac
-else
-	cry "Depo güncellemesinde hata oluştu.  Lütfen tekrar denemeden" \
-	    "önce hata iletilerini inceleyerek sorunu giderin."
-fi
+	;;
+*)
+	cry "Bu bir salt okunur çalışma kopyası olduğundan üst" \
+	    "depo değişiklikleri alınmayacak."
+	;;
+esac
