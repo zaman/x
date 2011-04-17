@@ -8,6 +8,8 @@ augroup mailedit
 	" Use <d--> to delete from the current line to signature.
 	autocmd FileType mail onoremap -- /\n^-- \=$\\|\%$/-1<cr>
 	autocmd FileType mail setlocal tw=72 et fo=tcrq2nw
+	" FIXME posta düzenlendikten sonra başlığın üzerine yazılıyor
+	autocmd FileType mail let &titleold = 'posta'
 
 	" Check missing attachments in mutt.  Stolen from Hugo Haas <hugo@larve.net>.
 	function! CheckAttachments()
