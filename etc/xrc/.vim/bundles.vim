@@ -17,6 +17,7 @@
 " Bundle: git://github.com/tpope/vim-vividchalk.git
 " Bundle: git://github.com/vim-scripts/0scan.git
 " Bundle: git://github.com/vim-scripts/Align.git
+" Bundle: git://github.com/vim-scripts/Command-T.git
 " Bundle: git://github.com/vim-scripts/desert256.vim.git
 " Bundle: git://github.com/vim-scripts/ftpluginruby.vim.git
 " Bundle: git://github.com/vim-scripts/Gist.vim.git
@@ -41,5 +42,4 @@
 " Bundle: git://github.com/vim-scripts/tir_black.git
 " Bundle: git://github.com/vim-scripts/xmledit.git
 " Bundle: git://github.com/vim-scripts/yaifa.vim.git
-" Bundle: git://github.com/vim-scripts/Zenburn.git
-" Bundle: git://git.wincent.com/command-t.git
+" Bundle: git://github.com/vim-scripts/ZenCoding.vim.git
