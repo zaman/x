@@ -2,7 +2,10 @@
 
 anyattr base && skiptask "baz sistem veya yeni olmayan kurulum"
 
+# 19/x yapılandırması mevcutsa yükle
 [ -n "$XRCFILE" ] || XRCFILE=".x"
+[ -f "$XRCFILE" ] && . "$XRCFILE"
+
 GITCONFIGFILE=".gitconfig"
 
 # Sorularda öntanımlı cevaplar
