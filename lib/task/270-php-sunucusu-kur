@@ -18,6 +18,7 @@ nginx-extras
 ntp
 p7zip
 php5-cgi
+php5-cli
 php5-curl
 php5-fpm
 php5-gd
