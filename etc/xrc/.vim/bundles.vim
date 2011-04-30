@@ -2,6 +2,7 @@
 " dosyasını düzenleyin.
 
 " Bundle: git://github.com/bronson/vim-trailing-whitespace.git
+" Bundle: git://github.com/jnwhiteh/vim-golang.git
 " Bundle: git://github.com/tpope/vim-abolish.git
 " Bundle: git://github.com/tpope/vim-cucumber.git
 " Bundle: git://github.com/tpope/vim-endwise.git
