@@ -41,7 +41,7 @@
 " Bundle: git://github.com/vim-scripts/SingleCompile.git
 " Bundle: git://github.com/vim-scripts/SourceCodeObedience.git
 " Bundle: git://github.com/vim-scripts/SQLComplete.vim.git
-" Bundle: git://github.com/vim-scripts/Syntastic.git
+" Bundle: git://github.com/scrooloose/syntastic.git
 " Bundle: git://github.com/vim-scripts/tComment.git
 " Bundle: git://github.com/vim-scripts/tir_black.git
 " Bundle: git://github.com/vim-scripts/xmledit.git
