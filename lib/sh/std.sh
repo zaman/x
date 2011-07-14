@@ -236,17 +236,18 @@ usetempdir() {
 
 	[ -d "$tempdir" ] || die "geçici bir dizin oluşturulamadı"
 
-	eval $(echo "$tempname=\"$tempdir\"")
-
-	if [ -z "$keeptemp" ]; then
+	if isnull TEMPDIRS_; then
 		trap '
 			exitcode=$?
-			if [ -d "'$tempdir'" ]; then
-				rm -rf -- "'$tempdir'"
-			fi
+			[ -z "$TEMPDIRS_" ] || rm -rf -- "${TEMPDIRS_[@]}"
+			unset TEMPDIRS_
 			exit $exitcode
 		' EXIT HUP INT QUIT TERM
 	fi
+
+	eval $(echo "$tempname=\"$tempdir\"")
+
+	[ -n "$keeptemp" ] || TEMPDIRS_+=("$tempdir")
 }
 
 # git deposunu denetle ve tepe dizine çık
