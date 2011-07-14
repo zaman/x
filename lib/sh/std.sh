@@ -215,7 +215,13 @@ sudoattempt() {
 	fi
 }
 
+# ilklendirilmemiş bir değişken mi?
+isnull() {
+	[[ ! ${!1} && ${!1-_} ]]
+}
+
 # güvenli geçici dizin oluştur
+unset TEMPDIRS_
 usetempdir() {
 	local tempname="$1" keeptemp="$2"
 
