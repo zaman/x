@@ -11,31 +11,21 @@ say "Depo güncelleniyor..."
 printf "\tUzak depo\t$origin_url\n\tÜst depo\t$upstream_url\n"
 
 say "Yerel depo uzak depo ile eşzamanlanıyor..."
-prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
-git pull origin master
-case "$(git show --format='format:%H' HEAD 2>/dev/null ||:)" in
-$prev)
-	cry "Değişiklik yok."
-	;;
-*)
+if git_pull_success_on_update origin master; then
 	cry "Uzak depodaki değişiklikler alındı."
-	;;
-esac
+else
+	cry "Değişiklik yok."
+fi
 
 case "$origin_url" in
 git@*|https://*@*)
 	say "Üst depo değişiklikleri alınıyor..."
-	prev=$(git show --format='format:%H' HEAD 2>/dev/null ||:)
-	git pull upstream master
-	case "$(git show --format='format:%H' HEAD 2>/dev/null ||:)" in
-	$prev)
-		cry "Değişiklik yok."
-		;;
-	*)
+	if git_pull_success_on_update upstream master; then
 		cry "Üst depodan alınan değişiklikler uzak depoya gönderiliyor..."
 		git push --all
-		;;
-	esac
+	else
+		cry "Değişiklik yok."
+	fi
 	;;
 *)
 	cry "Bu bir salt okunur çalışma kopyası olduğundan üst" \
