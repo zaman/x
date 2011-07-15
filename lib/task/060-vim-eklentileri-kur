@@ -43,13 +43,15 @@ if hasdeb golang-weekly; then
 	sudoattempt
 	if [ -d "${GOCODE_DIR}" ]; then
 		say "Gocode güncelleniyor..."
-		GIT_DIR="${GOCODE_DIR}/.git" \
-		sudo git_pull_success_on_update "git://${GOCODE_PKG}.git" || isskip=1
+		git_head_follow "${GOCODE_DIR}"
+		sudo git --git-dir="${GOCODE_DIR}/.git" pull || isskip=1
+		git_head_unfollow || isskip=1
 	else
 		say "Gocode kuruluyor..."
 		sudo git clone "git://${GOCODE_PKG}.git" "${GOCODE_DIR}"
 	fi
 	if [ -z "$isskip" ] && sudo gomake -C "$GOCODE_DIR" &&  [ -x "${GOCODE_DIR}/gocode" ]; then
+		sudo rm -f /usr/local/bin/gocode
 		sudo cp "${GOCODE_DIR}/gocode" /usr/local/bin/
 	fi
 elif ! anyattr server; then
