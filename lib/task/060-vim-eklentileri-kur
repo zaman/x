@@ -23,7 +23,8 @@ $vimpluginupdateprog
 # Command-T eklenti yapılandırması beklediğimiz yerde olmalı
 if [ -f "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}/extconf.rb" ]; then
 	# depo durumuna tekrar bak, güncelleme var mı?
-	if git_head_unfollow; then
+	if git_head_unfollow || \
+	   [ ! -f "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}/ext.so" ]; then
 		# ruby1.8 gerekiyor, 1.9'da eklenti çöküyor
 		if hascommand ruby1.8 && hasdeb ruby1.8-dev; then
 			say "Command-T Ruby eklentisi derleniyor..."; (
