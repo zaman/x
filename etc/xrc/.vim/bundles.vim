@@ -6,6 +6,8 @@
 " Bundle: git://github.com/honza/snipmate-snippets.git
 " Bundle: git://github.com/jnwhiteh/vim-golang.git
 " Bundle: git://github.com/MarcWeber/vim-addon-mw-utils.git
+" Bundle: git://github.com/scrooloose/syntastic.git
+" Bundle: git://github.com/spiiph/vim-space.git
 " Bundle: git://github.com/tomtom/tlib_vim.git
 " Bundle: git://github.com/tpope/vim-abolish.git
 " Bundle: git://github.com/tpope/vim-cucumber.git
@@ -41,7 +43,6 @@
 " Bundle: git://github.com/vim-scripts/SingleCompile.git
 " Bundle: git://github.com/vim-scripts/SourceCodeObedience.git
 " Bundle: git://github.com/vim-scripts/SQLComplete.vim.git
-" Bundle: git://github.com/scrooloose/syntastic.git
 " Bundle: git://github.com/vim-scripts/tComment.git
 " Bundle: git://github.com/vim-scripts/tir_black.git
 " Bundle: git://github.com/vim-scripts/xmledit.git
