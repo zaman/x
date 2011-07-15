@@ -904,6 +904,56 @@ git_iswc() {
 	esac
 }
 
+# deponun durumunu izle ve değişmişse raporla
+unset GIT_HEAD_FOLLOWED_ GIT_DIR_FOLLOWED_
+git_head_follow() {
+	local dir
+
+	dir="${1:-.}"
+	case "$dir" in
+	*/.git) ;;
+	*) dir="${dir}/.git" ;;
+	esac
+
+	GIT_DIR_FOLLOWED_="$dir"
+	GIT_HEAD_FOLLOWED_=$(
+		git --git-dir="$GIT_DIR_FOLLOWED_" rev-parse HEAD 2>/dev/null ||:
+	)
+}
+git_head_unfollow() {
+	local repo
+	local ret=0
+
+	if isnull GIT_HEAD_FOLLOWED_ || isnull GIT_DIR_FOLLOWED_; then
+		bug "İzlenen bir depo yok; önce git_head_follow çağrılmalı"
+	fi
+
+	case $(
+		git --git-dir="$GIT_DIR_FOLLOWED_" rev-parse HEAD 2>/dev/null ||:
+	) in
+	"$GIT_HEAD_FOLLOWED_")
+		ret=1
+		;;
+	esac
+
+	unset GIT_HEAD_FOLLOWED_ GIT_DIR_FOLLOWED_
+
+	return $ret
+}
+
+# depoyu güncelle ve değişiklik varsa (doğru dönerek) bildir
+git_pull_success_on_update() {
+	local prev
+
+	prev=$(git rev-parse HEAD 2>/dev/null ||:)
+	git pull "$@" || return 0
+	case "$(git rev-parse HEAD 2>/dev/null ||:)" in
+	$prev)
+		return 1
+		;;
+	esac
+}
+
 # GitHub API
 
 # github api erişimi
