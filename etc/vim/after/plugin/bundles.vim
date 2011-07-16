@@ -29,8 +29,6 @@ if !exists('s:goinfo')
 endif
 
 if exists("g:loaded_syntastic_plugin")
-	SyntasticEnable
-
 	sign define SyntasticError text=―▶ texthl=Search
 	sign define SyntasticWarning text=>> texthl=Warning
 	let g:syntastic_enable_signs=1
