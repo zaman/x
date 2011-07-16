@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# XXX "Günü kurtaran" bir Ruby kurulumu.  Gelecek Debian sürümlerinde buna
-# ihtiyaç olmayacaktır.
-
 # Hafif ortamlarda kurulum yapma.
 anyattr base && skiptask "baz sistem"
 
@@ -16,56 +13,49 @@ done
 
 if [ -z "$HAS_APT_UPDATED" ]; then
 	say "Paket indeksleri güncelleniyor..."
-	xaptitude update ||:
+	xaptget update ||:
 fi
 
-# ruby1.8 için rake ve gem'i kurmuyoruz
-xaptitude install ruby1.9.1-full ruby1.8 ruby1.8-dev build-essential
+# kaba kuvvete dayalı bir çözüm olarak Ruby paketlerini tekrar kur.  Dikkat!
+# ruby1.8 için rake ve gem'i kurmuyoruz.
+xaptget install --reinstall ruby1.9.1 ruby1.9.1-dev ri1.9.1 ruby1.8 ruby1.8-dev ri1.8 build-essential
 
-say "Ruby 1.8 sistem alternatifleri kuruluyor..."
-sudo update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.8 400 \
-	--slave   /usr/share/man/man1/ruby.1.gz ruby.1.gz \
-				/usr/share/man/man1/ruby1.8.1.gz \
-	--slave   /usr/share/man/man1/erb.1.gz erb.1.gz \
-				/usr/share/man/man1/erb1.8.1.gz \
-	--slave   /usr/share/man/man1/gem.1.gz gem.1.gz \
-				/usr/share/man/man1/gem1.8.1.gz \
-	--slave   /usr/share/man/man1/irb.1.gz irb.1.gz \
-				/usr/share/man/man1/irb1.8.1.gz \
-	--slave   /usr/share/man/man1/ri.1.gz ri.1.gz \
-				/usr/share/man/man1/ri1.8.1.gz \
-	--slave   /usr/share/man/man1/rdoc.1.gz rdoc.1.gz \
-				/usr/share/man/man1/rdoc1.8.1.gz \
-	--slave   /usr/share/man/man1/testrb.1.gz testrb.1.gz \
-				/usr/share/man/man1/testrb1.8.1.gz \
-	--slave   /usr/bin/erb erb /usr/bin/erb1.8 \
-	--slave   /usr/bin/gem gem /usr/bin/gem1.8 \
-	--slave   /usr/bin/irb irb /usr/bin/irb1.8 \
-	--slave   /usr/bin/rdoc rdoc /usr/bin/rdoc1.8 \
-	--slave   /usr/bin/ri ri /usr/bin/ri1.8 \
-	--slave   /usr/bin/testrb testrb /usr/bin/testrb1.8 \
-	>/dev/null 2>&1 ||: # hatasız ve sessiz
+# Yeni sürümlerde kullanılan alternatif sistemini eski sistemlere birebir uyarla.
+RUBY_VERSION=$(dpkg-query -W -f='${Version}' ruby1.9.1 2>/dev/null ||:)
+if dpkg --compare-versions "${RUBY_VERSION}" lt 1.9.2.180-2; then
+	p=10; for v in "1.9.1" "1.8"; do
+		say "Ruby ${v} sistem alternatifleri kuruluyor..."
+		# ruby
+		sudo update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby${v} $p \
+			--slave   /usr/share/man/man1/ruby.1.gz ruby.1.gz \
+						/usr/share/man/man1/ruby${v}.1.gz \
+			--slave   /usr/share/man/man1/erb.1.gz erb.1.gz \
+						/usr/share/man/man1/erb${v}.1.gz \
+			--slave   /usr/share/man/man1/irb.1.gz irb.1.gz \
+						/usr/share/man/man1/irb${v}.1.gz \
+			--slave   /usr/share/man/man1/ri.1.gz ri.1.gz \
+						/usr/share/man/man1/ri${v}.1.gz \
+			--slave   /usr/share/man/man1/rdoc.1.gz rdoc.1.gz \
+						/usr/share/man/man1/rdoc${v}.1.gz \
+			--slave   /usr/share/man/man1/testrb.1.gz testrb.1.gz \
+						/usr/share/man/man1/testrb${v}.1.gz \
+			--slave   /usr/bin/erb erb /usr/bin/erb${v} \
+			--slave   /usr/bin/irb irb /usr/bin/irb${v} \
+			--slave   /usr/bin/rdoc rdoc /usr/bin/rdoc${v} \
+			--slave   /usr/bin/ri ri /usr/bin/ri${v} \
+			--slave   /usr/bin/testrb testrb /usr/bin/testrb${v} ||: # hatasız
+		# gem
+		sudo update-alternatives --install /usr/bin/gem gem /usr/bin/gem${v} $p \
+			--slave   /usr/share/man/man1/gem.1.gz gem.1.gz \
+						/usr/share/man/man1/gem${v}.1.gz \
+			--slave /etc/bash_completion.d/gem bash_completion_gem \
+						/etc/bash_completion.d/gem${v} ||: # hatasız
+		# 1.9.1 → 10 ve 1.8 → 50 önceliğinde (öntanımlı ruby1.8)
+		p+=40
+	done >/dev/null 2>&1 # sessiz
+fi
 
-say "Ruby 1.9 sistem alternatifleri kuruluyor..." # öntanımlı
-sudo update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 500 \
-	--slave   /usr/share/man/man1/ruby.1.gz ruby.1.gz \
-				/usr/share/man/man1/ruby1.9.1.1.gz \
-	--slave   /usr/share/man/man1/erb.1.gz erb.1.gz \
-				/usr/share/man/man1/erb1.9.1.1.gz \
-	--slave   /usr/share/man/man1/gem.1.gz gem.1.gz \
-				/usr/share/man/man1/gem1.9.1.1.gz \
-	--slave   /usr/share/man/man1/irb.1.gz irb.1.gz \
-				/usr/share/man/man1/irb1.9.1.1.gz \
-	--slave   /usr/share/man/man1/ri.1.gz ri.1.gz \
-				/usr/share/man/man1/ri1.9.1.1.gz \
-	--slave   /usr/share/man/man1/rdoc.1.gz rdoc.1.gz \
-				/usr/share/man/man1/rdoc1.9.1.1.gz \
-	--slave   /usr/share/man/man1/testrb.1.gz testrb.1.gz \
-				/usr/share/man/man1/testrb1.9.1.1.gz \
-	--slave   /usr/bin/erb erb /usr/bin/erb1.9.1 \
-	--slave   /usr/bin/gem gem /usr/bin/gem1.9.1 \
-	--slave   /usr/bin/irb irb /usr/bin/irb1.9.1 \
-	--slave   /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1 \
-	--slave   /usr/bin/ri ri /usr/bin/ri1.9.1 \
-	--slave   /usr/bin/testrb testrb /usr/bin/testrb1.9.1 \
-	>/dev/null 2>&1 ||: # hatasız ve sessiz
+# Resmi alternatiflerde ruby1.8 öntanımlı.  Bunu 1.9.1 yap.
+say "Öntanımlı Ruby sürümü 1.9.1 olarak ayarlanıyor..."
+sudo update-alternatives --set ruby /usr/bin/ruby1.9.1
+sudo update-alternatives --set gem /usr/bin/gem1.9.1
