@@ -36,7 +36,6 @@
 " Bundle: git://github.com/vim-scripts/localvimrc.git
 " Bundle: git://github.com/vim-scripts/matchit.zip.git
 " Bundle: git://github.com/vim-scripts/nginx.vim.git
-" Bundle: git://github.com/vim-scripts/Obvious-Mode.git
 " Bundle: git://github.com/vim-scripts/pep8.git
 " Bundle: git://github.com/vim-scripts/pydoc.vim.git
 " Bundle: git://github.com/vim-scripts/ruby.vim.git
