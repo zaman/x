@@ -123,3 +123,8 @@ endif
 if exists("colors_name") && colors_name == "tir_black"
 	hi StatusLineNC guifg=black guibg=#202020 ctermfg=234 ctermbg=245
 endif
+
+if exists('loaded_taglist')
+	nnoremap <silent> <F8> :TlistToggle<CR>
+	let tlist_go_settings = 'go;p:Packages;t:Types;f:Functions;c:Constants;v:Variables'
+endif
