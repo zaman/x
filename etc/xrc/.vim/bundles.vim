@@ -2,6 +2,7 @@
 " dosyasını düzenleyin.
 
 " Bundle: git://github.com/bronson/vim-trailing-whitespace.git
+" Bundle: git://github.com/ervandew/supertab.git
 " Bundle: git://github.com/garbas/vim-snipmate.git
 " Bundle: git://github.com/honza/snipmate-snippets.git
 " Bundle: git://github.com/jnwhiteh/vim-golang.git
@@ -22,10 +23,11 @@
 " Bundle: git://github.com/tpope/vim-repeat.git
 " Bundle: git://github.com/tpope/vim-surround.git
 " Bundle: git://github.com/tpope/vim-vividchalk.git
-" Bundle: git://github.com/vim-scripts/0scan.git
 " Bundle: git://github.com/vim-scripts/Align.git
+" Bundle: git://github.com/vim-scripts/a.vim.git
 " Bundle: git://github.com/vim-scripts/Command-T.git
 " Bundle: git://github.com/vim-scripts/desert256.vim.git
+" Bundle: git://github.com/vim-scripts/DrawIt.git
 " Bundle: git://github.com/vim-scripts/ftpluginruby.vim.git
 " Bundle: git://github.com/vim-scripts/Gist.vim.git
 " Bundle: git://github.com/vim-scripts/github-theme.git
@@ -40,8 +42,7 @@
 " Bundle: git://github.com/vim-scripts/pydoc.vim.git
 " Bundle: git://github.com/vim-scripts/ruby.vim.git
 " Bundle: git://github.com/vim-scripts/SingleCompile.git
-" Bundle: git://github.com/vim-scripts/SourceCodeObedience.git
-" Bundle: git://github.com/vim-scripts/SQLComplete.vim.git
+" Bundle: git://github.com/vim-scripts/taglist.vim
 " Bundle: git://github.com/vim-scripts/tComment.git
 " Bundle: git://github.com/vim-scripts/tir_black.git
 " Bundle: git://github.com/vim-scripts/xmledit.git
