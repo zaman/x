@@ -37,9 +37,14 @@ augroup alledit
 		set title
 	endif
 
-	" Uçbirim coğullayıcıda çalışıyorsak pencere başlığını düzenlenen dosya olarak ayarla.
+	" Uçbirim coğullayıcıda çalışıyorsak pencere başlığını düzenlenen dosya olarak ayarla
+	" ve konsol kipinde çalışmayan bazı tuş kombinasyonlarını tanımla.
 	if &term =~ 'screen'
 		execute "set title titlestring=%y\\ %f | set t_ts=\<ESC>k t_fs=\<ESC>\\"
+		imap [B <c-down>
+		imap [A <c-up>
+		imap [C <c-right>
+		imap [D <c-left>
 	endif
 augroup END
 
