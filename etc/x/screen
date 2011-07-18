@@ -84,7 +84,7 @@ tmux|*/tmux)
 		# Yeni oturumlarda önce istemciyi ayır
 		flags="-d"
 	fi
-	if ! "$screen" has-session -t "$profile" 2>/dev/null; then
+	if ! sh "$screen" has-session -t "$profile" 2>/dev/null; then
 		"$screen" $opts new-session $flags -n sh -s "$profile" "exec /bin/bash"
 		for f in $conffiles; do
 			"$screen" source-file "$f"
