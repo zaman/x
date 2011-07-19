@@ -144,6 +144,7 @@ idle
 imagemagick
 inkscape
 ipython
+key-mon
 latex-beamer
 libbsd-dev
 libfacets-ruby1.9.1
@@ -181,6 +182,7 @@ texlive-latex-extra
 texlive-latex-recommended
 texlive-publishers
 texlive-xetex
+tilda
 tk-tile
 ttf-inconsolata
 ttf-ubuntu-title
@@ -189,6 +191,7 @@ ubuntu-dev-tools
 vim-gnome
 weechat
 wireshark
+xdotool
 xfonts-scalable
 "
 
