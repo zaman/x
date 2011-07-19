@@ -28,7 +28,6 @@
 " Bundle: git://github.com/vim-scripts/Command-T.git
 " Bundle: git://github.com/vim-scripts/desert256.vim.git
 " Bundle: git://github.com/vim-scripts/DrawIt.git
-" Bundle: git://github.com/vim-scripts/ftpluginruby.vim.git
 " Bundle: git://github.com/vim-scripts/Gist.vim.git
 " Bundle: git://github.com/vim-scripts/github-theme.git
 " Bundle: git://github.com/vim-scripts/gmcs.vim.git
