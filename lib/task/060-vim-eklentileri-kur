@@ -38,22 +38,18 @@ if [ -f "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}/extconf.rb" ]; then
 	fi
 fi
 
-# Gocode'u derle.  Bunun için güncel bir go sürümü lazım.
-if hasdeb golang-weekly; then
-	sudoattempt
-	if [ -d "${GOCODE_DIR}" ]; then
-		say "Gocode güncelleniyor..."
-		git_head_follow "${GOCODE_DIR}"
-		sudo git --git-dir="${GOCODE_DIR}/.git" pull || isskip=1
-		git_head_unfollow || isskip=1
-	else
+# Gocode'u kur.  Bunun için güncel bir go sürümü lazım.
+if ! hascommand gocode; then
+	if hasdeb golang-weekly; then
 		say "Gocode kuruluyor..."
-		sudo git clone "git://${GOCODE_PKG}.git" "${GOCODE_DIR}"
+		sudoattempt
+		[ -d "${GOCODE_DIR}" ] || \
+			sudo git clone "git://${GOCODE_PKG}.git" "${GOCODE_DIR}"
+		if sudo gomake -C "$GOCODE_DIR" &&  [ -x "${GOCODE_DIR}/gocode" ]; then
+			sudo rm -f /usr/local/bin/gocode
+			sudo cp "${GOCODE_DIR}/gocode" /usr/local/bin/
+		fi
+	elif ! anyattr server; then
+		cry "golang-weekly paketi kurulu değil; Gocode kurulmayacak"
 	fi
-	if [ -z "$isskip" ] && sudo gomake -C "$GOCODE_DIR" &&  [ -x "${GOCODE_DIR}/gocode" ]; then
-		sudo rm -f /usr/local/bin/gocode
-		sudo cp "${GOCODE_DIR}/gocode" /usr/local/bin/
-	fi
-elif ! anyattr server; then
-	cry "golang-weekly paketi kurulu değil; Gocode kurulmayacak"
 fi
