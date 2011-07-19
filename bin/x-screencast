@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# 19/x konsol canlandırma çekimleri için standart bir ortam kurar.
+#
+# Öntanımlı olarak 800x600 çözünürlükte kayıt yapıyoruz.  Değiştirmek için
+# en az bir boyutu verin.  Örnek:
+#
+# 	x-screencast 1024 #=> 1024x768
+# 	x-screencast 400 200 #=> 400x200
+#
+# Bu betik isminde "key" geçen bir sembolik bağ üzerinden çalıştırılırsa
+# konsolun üzerine key-mon'u bindirir.
+#
+# Çekimlerde 19/x tmux profili olarak ~/.tmux/*screencast kullanılır.  Çekim
+# başlamadan çalıştırılmasını istediğiniz programları o dosyada ayarlayın.
+
+use std
+
+hascommand tilda   || ensuredeb tilda
+hascommand xdotool || ensuredeb xdotool
+
+PROGNAME=${0##*/}
+
+PROFILE=screencast
+
+HSIZE=${1:-800}
+VSIZE=${2:-$((3 * $HSIZE/4))}
+
+FONTNAME="Terminus"
+if [ $VSIZE -le 800 ]; then
+	FONTSIZE=12
+else
+	FONTSIZE=14
+fi
+
+case "${PROGNAME#x-}" in
+*key*)
+	hascommand key-mon || ensuredeb key-mon
+	with_keymon=yes
+	;;
+esac
+
+pkill -f "tmux .* $PROFILE" 2>/dev/null ||:
+sleep 0.1
+
+# Neden "tilda"?  Ayarlanabilirliği yüksek, örneğin dekorasyonsuz çalışabiliyor.
+tilda	--name "$PROGNAME" \
+	--font "$FONTNAME $FONTSIZE" \
+	--command "sh -c 'TERM=xterm-256color x-screen $PROFILE'" &
+
+if [ -n "$with_keymon" ]; then
+	KEYMON_X=$(($HSIZE - 204))
+	KEYMON_Y=36
+
+	killall key-mon 2>/dev/null ||:
+	LC_ALL=en_US.UTF-8 key-mon --nodecorated --nomouse &
+
+	sleep 1
+	xdotool - <<-EOF
+	search --classname 'key-mon'
+	windowmove %@ $KEYMON_X $KEYMON_Y
+	windowraise %@
+	windowfocus %@
+	EOF
+
+fi
+
+sleep 0.1
+xdotool - <<EOF
+search --classname '$PROGNAME'
+windowsize %@ $HSIZE $VSIZE
+windowmove %@ 0 0
+windowraise %@
+windowfocus %@
+EOF
