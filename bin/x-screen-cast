@@ -131,4 +131,4 @@ fi >/dev/null 2>&1 ||:
 # Uçbirim penceresini orijine çekerek boyutlandır.
 xdotool search --pid $terminal_pid windowactivate \
 	windowsize %@ $TERMINAL_WIDTH $TERMINAL_HEIGHT \
-	windowmove 0 0 windowfocus click 1 >/dev/null 2>&1 ||:
+	windowmove 0 0 >/dev/null 2>&1 ||:
