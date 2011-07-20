@@ -66,7 +66,7 @@ if [ $# -eq 0 ]; then
 		USE_KEYMON=yes
 		;;
 	*)
-		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		exit
 		;;
 	esac
 else
@@ -125,11 +125,10 @@ if [ -n "$USE_KEYMON" ]; then
 	keymon_x=$(($TERMINAL_WIDTH - $WIDTH - 36)); keymon_y=36
 	# ... ve kaydır
 	xdotool search --pid $keymon_pid windowactivate \
-		windowmove %@ $keymon_x $keymon_y \
-		windowraise
+		windowmove %@ $keymon_x $keymon_y
 fi >/dev/null 2>&1 ||:
 
 # Uçbirim penceresini orijine çekerek boyutlandır.
 xdotool search --pid $terminal_pid windowactivate \
 	windowsize %@ $TERMINAL_WIDTH $TERMINAL_HEIGHT \
-	windowmove 0 0 windowfocus >/dev/null 2>&1 ||:
+	windowmove 0 0 windowfocus click 1 >/dev/null 2>&1 ||:
