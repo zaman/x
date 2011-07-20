@@ -28,8 +28,52 @@ if ! ls -1 ~/.tmux/*screencast* >/dev/null 2>&1; then
 	PROFILE=default
 fi
 
-TERMINAL_WIDTH=${1:-800}
-TERMINAL_HEIGHT=${2:-$((3 * $TERMINAL_WIDTH/4))}
+# Program isminde bir yerde "key" geçiyorsa tuşlu uçbirim.
+case "${PROGNAME#x-}" in
+*key*)
+	hascommand key-mon || ensuredeb key-mon
+	USE_KEYMON=yes
+	;;
+*)
+	USE_KEYMON=
+	;;
+esac
+
+# Argüman verilmemişse soralım.
+if [ $# -eq 0 ]; then
+	hascommand zenity || ensuredeb zenity
+	case "$(
+		zenity	--title "Hmm" --list --radiolist \
+			--text "Lütfen bir profil seçin" \
+			--column "Seç" --column "Profil" \
+			TRUE "Düz 800x600 uçbirim" \
+			FALSE "Tuşlu 800x600 uçbirim" \
+			FALSE "Düz 1024x768 uçbirim" \
+			FALSE "Tuşlu 1024x768 uçbirim"
+	)" in
+	"Düz 800x600 uçbirim")
+		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		;;
+	"Tuşlu 800x600 uçbirim")
+		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		USE_KEYMON=yes
+		;;
+	"Düz 1024x768 uçbirim")
+		TERMINAL_WIDTH=1024; TERMINAL_HEIGHT=768
+		;;
+	"Tuşlu 1024x768 uçbirim")
+		TERMINAL_WIDTH=1024; TERMINAL_HEIGHT=768
+		USE_KEYMON=yes
+		;;
+	*)
+		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		;;
+	esac
+else
+	TERMINAL_WIDTH=${1:-800}
+	TERMINAL_HEIGHT=${2:-$((3 * $TERMINAL_WIDTH/4))}
+fi
+
 
 FONTNAME="Terminus"
 if [ $TERMINAL_HEIGHT -lt 768 ]; then
@@ -38,13 +82,6 @@ else
 	FONTSIZE=14
 fi
 
-# Program isminde bir yerde "key" geçiyorsa keymon'u uçbirime bindir.
-case "${PROGNAME#x-}" in
-*key*)
-	hascommand key-mon || ensuredeb key-mon
-	with_keymon=yes
-	;;
-esac
 
 # Tmux screencast profili çalışıyorsa sustur, bu aynı zamanda uçbirimi de
 # sonlandırır.
@@ -61,7 +98,7 @@ tilda  --font "$FONTNAME $FONTSIZE" \
 terminal_pid=$!
 sleep 0.5
 
-if [ -n "$with_keymon" ]; then
+if [ -n "$USE_KEYMON" ]; then
 	# Keymon zaten çalışıyorsa sustur.  Bize doğru bir pid değeri lazım.
 	old_pid=$(pgrep key-mon)
 	if [ -n "$old_pid" ]; then
