@@ -2,6 +2,7 @@
 
 accounts = 00010011
 maxsyncaccounts = 1
+ui = Blinkenlights
 
 # Yardımcı işlevler (ör. mycmp) hangi dosyada?
 pythonfile = ~/.offlineimap.py
