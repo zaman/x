@@ -46,9 +46,12 @@ ronn
 # ------------------------------------------------------------------------------
 
 GEM_EXTRA="
+chunky_png
 gdata4ruby
 gdocs4ruby
 methopara
+oily_png
+pythonconfig
 rdp-arguments
 rvm
 "

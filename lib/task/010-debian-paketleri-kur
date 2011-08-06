@@ -132,6 +132,7 @@ byzanz
 chromium-browser
 cmake
 cscope
+cutcapt
 devscripts
 exuberant-ctags
 git-buildpackage
@@ -167,6 +168,7 @@ php5-cli
 pyflakes
 python-doc
 python-docutils
+python-landslide
 python-matplotlib
 python-numpy
 python-pygments
