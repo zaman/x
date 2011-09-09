@@ -1,11 +1,55 @@
 #!/bin/bash
 
+COMMANDT_BUNDLE=".vim/bundle/Command-T"
+COMMANDT_EXT="ruby/command-t"
+
+GOCODE_PKG=github.com/nsf/gocode
+GOCODE_DIR="${GOROOT:-/usr/lib/go}/src/pkg/${GOCODE_PKG}"
+
 anyattr base && skiptask "baz sistem"
 
 hascommand ruby || skiptask "ruby kurulu değil"
+
+# Command-T eklentisinin depo durumunu kurulum öncesinde not et
+git_head_follow "./${COMMANDT_BUNDLE}"
 
 # vim eklentilerini güncelleme betiği
 vimpluginupdateprog="./bin/vim-update-bundles"
 [ -x "$vimpluginupdateprog" ] || die "$vimpluginupdateprog bulunamadı."
 
+say "Vim eklentileri kuruluyor/güncelleniyor..."
 $vimpluginupdateprog
+
+# Command-T eklenti yapılandırması beklediğimiz yerde olmalı
+if [ -f "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}/extconf.rb" ]; then
+	# depo durumuna tekrar bak, güncelleme var mı?
+	if git_head_unfollow || \
+	   [ ! -f "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}/ext.so" ]; then
+		# ruby1.8 gerekiyor, 1.9'da eklenti çöküyor
+		if hascommand ruby1.8 && hasdeb ruby1.8-dev; then
+			say "Command-T Ruby eklentisi derleniyor..."; (
+				cd "./${COMMANDT_BUNDLE}/${COMMANDT_EXT}"
+				ruby1.8 extconf.rb
+				make
+			) || cry "Command-T Ruby eklentisi derlenemedi"
+		else
+			cry "ruby1.8 kurulu değil; Command-T eklentisi çalışmayacak"
+		fi
+	fi
+fi
+
+# Gocode'u kur.  Bunun için güncel bir go sürümü lazım.
+if ! hascommand gocode; then
+	if hasdeb golang-weekly; then
+		say "Gocode kuruluyor..."
+		sudoattempt
+		[ -d "${GOCODE_DIR}" ] || \
+			sudo git clone "git://${GOCODE_PKG}.git" "${GOCODE_DIR}"
+		if sudo gomake -C "$GOCODE_DIR" &&  [ -x "${GOCODE_DIR}/gocode" ]; then
+			sudo rm -f /usr/local/bin/gocode
+			sudo cp "${GOCODE_DIR}/gocode" /usr/local/bin/
+		fi
+	elif ! anyattr server; then
+		cry "golang-weekly paketi kurulu değil; Gocode kurulmayacak"
+	fi
+fi

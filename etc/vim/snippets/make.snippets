@@ -1,0 +1,9 @@
+# Snippet for Go commands or packages
+snippet go
+	include $(GOROOT)/src/Make.inc
+	
+	TARG=${1:command}
+	GOFILES=\
+		$1.go
+	
+	include $(GOROOT)/src/Make.${2:cmd}

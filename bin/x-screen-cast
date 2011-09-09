@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# 19/x konsol canlandırma çekimleri için standart bir ortam kurar.
+#
+# Öntanımlı olarak 800x600 çözünürlükte kayıt yapıyoruz.  Değiştirmek için
+# en az bir boyutu verin.  Örnek:
+#
+# 	x-screencast 1024 #=> 1024x768
+# 	x-screencast 400 200 #=> 400x200
+#
+# Bu betik isminde "key" geçen bir sembolik bağ üzerinden çalıştırılırsa
+# konsolun üzerine key-mon'u bindirir.
+#
+# Çekimlerde 19/x tmux profili olarak ~/.tmux/*screencast kullanılır.  Çekim
+# başlamadan çalıştırılmasını istediğiniz programları o dosyada ayarlayın.
+
+use std
+
+# Bunlar lazım.
+hascommand tilda   || ensuredeb tilda
+hascommand xdotool || ensuredeb xdotool
+
+PROGNAME=${0##*/}
+
+# Özel bir screencast profilimiz olmalı, yoksa default'a düş.
+PROFILE=screencast
+if ! ls -1 ~/.tmux/*screencast* >/dev/null 2>&1; then
+	PROFILE=default
+fi
+
+# Program isminde bir yerde "key" geçiyorsa tuşlu uçbirim.
+case "${PROGNAME#x-}" in
+*key*)
+	hascommand key-mon || ensuredeb key-mon
+	USE_KEYMON=yes
+	;;
+*)
+	USE_KEYMON=
+	;;
+esac
+
+# Argüman verilmemişse soralım.
+if [ $# -eq 0 ]; then
+	hascommand zenity || ensuredeb zenity
+	case "$(
+		zenity	--title "Hmm" --list --radiolist \
+			--text "Lütfen bir profil seçin" \
+			--column "Seç" --column "Profil" \
+			TRUE "Düz 800x600 uçbirim" \
+			FALSE "Tuşlu 800x600 uçbirim" \
+			FALSE "Düz 1024x768 uçbirim" \
+			FALSE "Tuşlu 1024x768 uçbirim"
+	)" in
+	"Düz 800x600 uçbirim")
+		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		;;
+	"Tuşlu 800x600 uçbirim")
+		TERMINAL_WIDTH=800; TERMINAL_HEIGHT=600
+		USE_KEYMON=yes
+		;;
+	"Düz 1024x768 uçbirim")
+		TERMINAL_WIDTH=1024; TERMINAL_HEIGHT=768
+		;;
+	"Tuşlu 1024x768 uçbirim")
+		TERMINAL_WIDTH=1024; TERMINAL_HEIGHT=768
+		USE_KEYMON=yes
+		;;
+	*)
+		exit
+		;;
+	esac
+else
+	TERMINAL_WIDTH=${1:-800}
+	TERMINAL_HEIGHT=${2:-$((3 * $TERMINAL_WIDTH/4))}
+fi
+
+
+FONTNAME="Terminus"
+if [ $TERMINAL_HEIGHT -lt 768 ]; then
+	FONTSIZE=12
+else
+	FONTSIZE=14
+fi
+
+
+# Tmux screencast profili çalışıyorsa sustur, bu aynı zamanda uçbirimi de
+# sonlandırır.
+old_pid=$(pgrep -f "tmux .*${PROFILE}")
+if [ -n "$old_pid" ]; then
+	kill -9 $old_pid
+	sleep 0.2
+fi 2>/dev/null ||:
+
+# Uçbirimi içte screencast profiliyle tmux çalışacak şekilde başlat.  Neden
+# "tilda"?  Ayarlanabilirliği yüksek, örneğin dekorasyonsuz çalışabiliyor.
+tilda  --font "$FONTNAME $FONTSIZE" \
+       --command "sh -c 'TERM=xterm-256color x-screen $PROFILE'" &
+terminal_pid=$!
+sleep 0.5
+
+if [ -n "$USE_KEYMON" ]; then
+	# Keymon zaten çalışıyorsa sustur.  Bize doğru bir pid değeri lazım.
+	old_pid=$(pgrep key-mon)
+	if [ -n "$old_pid" ]; then
+		kill -9 $old_pid
+		sleep 0.2
+	fi
+
+	# Keymon'u arka planda çalıştır.
+	LC_ALL=en_US.UTF-8 key-mon --nodecorated --nomouse &
+	keymon_pid=$!
+	sleep 0.5
+
+	# Keymon penceresinin genişliğini öğrenmeye çalış.
+	eval $(
+		xdotool search --pid $keymon_pid windowactivate \
+			getwindowgeometry --shell %1
+	)
+	# Bazen (ör. bekleme süresi yeterli değilse) bu değer hatalı oluyor.
+	if [ -z "$WIDTH" ] || [ $WIDTH -le 50 ]; then
+		WIDTH=232
+	fi
+
+	# Şimdi keymon penceresini ne kadar kaydıracağımızı hesapla.
+	keymon_x=$(($TERMINAL_WIDTH - $WIDTH - 36)); keymon_y=36
+	# ... ve kaydır
+	xdotool search --pid $keymon_pid windowactivate \
+		windowmove %@ $keymon_x $keymon_y
+fi >/dev/null 2>&1 ||:
+
+# Uçbirim penceresini orijine çekerek boyutlandır.
+xdotool search --pid $terminal_pid windowactivate \
+	windowsize %@ $TERMINAL_WIDTH $TERMINAL_HEIGHT \
+	windowmove 0 0 >/dev/null 2>&1 ||:

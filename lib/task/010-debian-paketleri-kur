@@ -132,10 +132,12 @@ byzanz
 chromium-browser
 cmake
 cscope
+cutycapt
 devscripts
 exuberant-ctags
 git-buildpackage
 glibc-doc
+golang-weekly
 graphviz
 gtk2-engines-wonderland
 highlight
@@ -143,6 +145,7 @@ idle
 imagemagick
 inkscape
 ipython
+key-mon
 latex-beamer
 libbsd-dev
 libfacets-ruby1.9.1
@@ -165,6 +168,7 @@ php5-cli
 pyflakes
 python-doc
 python-docutils
+python-landslide
 python-matplotlib
 python-numpy
 python-pygments
@@ -180,6 +184,7 @@ texlive-latex-extra
 texlive-latex-recommended
 texlive-publishers
 texlive-xetex
+tilda
 tk-tile
 ttf-inconsolata
 ttf-ubuntu-title
@@ -188,6 +193,7 @@ ubuntu-dev-tools
 vim-gnome
 weechat
 wireshark
+xdotool
 xfonts-scalable
 "
 
