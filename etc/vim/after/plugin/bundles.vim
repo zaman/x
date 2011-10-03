@@ -4,12 +4,17 @@
 " eklentilerin kullanıcı tercihlerini bu dosyada tutuyoruz.  DİKKAT!  Önce
 " eklentinin varlığını denetlemelisiniz.  Aksi halde hata olacaktır.
 
-" Bu dizin ve üstünde bir inşa dosyası (öntanımlı Makefile) var mı?
-function! s:has_buildfile(...)
-	let buildfile = (a:0 != "" ? a:0 : "Makefile")
-	let found = findfile(buildfile, escape(expand("%:p:h"), ' ~|!"$%&()=?{[]}+*#'."'") . ";")
-	" Ev dizinindeki çöp dosyaları dikkate alma.
-	return found != "" && found != $HOME . "/" . buildfile
+" Bu dizin ve üstünde bir inşa dosyaları var mı?
+function! s:has_buildfiles(...)
+	let buildfiles = (a:0 != "" ? a:0 : ["Makefile", "Makefile.am", "Makefile.in", "GNUmakefile"])
+	for f in buildfiles
+		let found = findfile(f, escape(expand("%:p:h"), ' ~|!"$%&()=?{[]}+*#'."'") . ";")
+		" Ev dizinindeki çöp dosyaları dikkate alma.
+		if found != "" && found != $HOME . "/" . f
+			return 1
+		endif
+	endfor
+	return 0
 endfunction
 
 " Go geliştirme ortamı bilgilerini topla
@@ -50,6 +55,9 @@ if exists("g:loaded_syntastic_plugin")
 		" Fakat Go projelerinde Syntastic'i iptal etmek yerine en azından basit
 		" sözdizimi denetimi yap.
 		function! s:simple_syntax_check_on_go_projects()
+			if !s:has_buildfiles()
+				return
+			endif
 			if ! executable('govet')
 				SyntasticDisable
 				return
@@ -60,14 +68,18 @@ if exists("g:loaded_syntastic_plugin")
 				return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
 			endfunction
 		endfunction
-		autocmd FileType go if s:has_buildfile() | call s:simple_syntax_check_on_go_projects() | endif
+		autocmd FileType go call s:simple_syntax_check_on_go_projects()
 	endif
 
-	" Statik tipli bazı dillerde geliştirilen projelerde Syntastic
-	" eklentisini etkisizleştir, aksi halde (önceden derlenmesi gereken
-	" kaynak dosyaların varlğından dolayı) gürültü oluyor.
-	autocmd FileType c,cpp if s:has_buildfile() | SyntasticDisable | endif
-
+	" Statik tipli baz¿ dillerde geli¿tirilen projelerde Syntastic
+	" eklentisini etkisizle¿tir, aksi halde (önceden derlenmesi gereken
+	" kaynak dosyalar¿n varl¿¿ndan dolay¿) gürültü oluyor.
+	function! s:disable_syntastic_on_c_projects()
+		if s:has_buildfiles()
+			SyntasticDisable
+		endif
+	endfunction
+	autocmd FileType c,cpp call s:disable_syntastic_on_c_projects()
 endif
 
 if exists("g:loaded_SingleCompile")
@@ -79,7 +91,7 @@ if exists("g:loaded_SingleCompile")
 	endif
 
 	function! MakeOrSingleCompile()
-		if s:has_buildfile()
+		if s:has_buildfiles()
 			make
 		else
 			SCCompile
@@ -87,7 +99,7 @@ if exists("g:loaded_SingleCompile")
 	endfunction
 
 	function! MakeRunOrSingleCompileRun()
-		if s:has_buildfile()
+		if s:has_buildfiles()
 			let prog = expand("%<")
 			lmake
 			if filereadable(prog)
