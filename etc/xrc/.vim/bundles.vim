@@ -47,4 +47,3 @@
 " Bundle: git://github.com/vim-scripts/xmledit.git
 " Bundle: git://github.com/vim-scripts/yaifa.vim.git
 " Bundle: git://github.com/vim-scripts/ZenCoding.vim.git
-" Bundle: git://github.com/xolox/vim-easytags.git
