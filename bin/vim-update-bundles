@@ -22,6 +22,7 @@
 
 require 'fileutils'
 require 'open-uri'
+require 'openssl'
 
 
 def dotvim *path
