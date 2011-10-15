@@ -71,9 +71,9 @@ if exists("g:loaded_syntastic_plugin")
 		autocmd FileType go call s:simple_syntax_check_on_go_projects()
 	endif
 
-	" Statik tipli baz¿ dillerde geli¿tirilen projelerde Syntastic
-	" eklentisini etkisizle¿tir, aksi halde (önceden derlenmesi gereken
-	" kaynak dosyalar¿n varl¿¿ndan dolay¿) gürültü oluyor.
+	" Statik tipli bazı dillerde geliştirilen projelerde Syntastic
+	" eklentisini etkisizleştir, aksi halde (önceden derlenmesi gereken
+	" kaynak dosyaların varlığından dolayı) gürültü oluyor.
 	function! s:disable_syntastic_on_c_projects()
 		if s:has_buildfiles()
 			SyntasticDisable
