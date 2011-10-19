@@ -199,7 +199,7 @@ xfonts-scalable
 
 # Aptitude hata verdiğinde bir de APT ile dene
 aptitude_or_aptget() {
-	xaptitude install "$@" || xaptget install "$@"
+	xaptitude "$@" || xaptget "$@"
 }
 
 if ! anyattr server && anyattr gui; then
