@@ -60,7 +60,7 @@ while [ $try -gt 0 ]; do
 	err=0
 
 	say "Gerekli Deb paketleri kuruluyor..."
-	xaptitude install $DEB_BASE || err=$?
+	xaptitude install $DEB_BASE || xaptget install $DEB_BASE || err=$?
 
 	# hata yoksa çık
 	[ $err -ne 0 ] || break
