@@ -137,7 +137,7 @@ devscripts
 exuberant-ctags
 git-buildpackage
 glibc-doc
-golang-weekly
+golang-go
 graphviz
 gtk2-engines-wonderland
 highlight
