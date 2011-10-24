@@ -1,13 +1,13 @@
 # Class
 snippet class
 	class ${1:name}
-		constructor: (${2:params...}) ->
-			${3://body...}
+	  constructor: (${2:params...}) ->
+	    ${3://body...}
 
 # Funcion
 snippet fun
 	${1:function_name} = (${2:argumen}) ->
-		${3: //body...}
+	  ${3: //body...}
 
 # Asignation if
 snippet =if
@@ -32,7 +32,7 @@ snippet forin
 # Asignation forof
 snippet forof
 	${1:ages} = for ${2:key}, ${3:value} of ${4:yearsOld}
-		key + " is " + value
+	  key + " is " + value
 
 # Asignation while
 snippet while
@@ -45,23 +45,23 @@ snippet until
 # Asignation forindo
 snippet forindo
 	for ${1:filename} in ${2:list}
-		do (${3:filename}) ->
+	  do (${3:filename}) ->
 
 # Asignation try
 snippet try
 	try
-		${1:expresion}
+	  ${1:expresion}
 	catch error
-		${2:error}
+	  ${2:error}
 
 # Asignation tryfin
 snippet tryfin
 	try
-		${1:expresion}
+	  ${1:expresion}
 	catch error
-		${2:error}
+	  ${2:error}
 	finally
-		${3:cleanAll()}
+	  ${3:cleanAll()}
 
 # Asignation ?=
 snippet ?=
@@ -74,13 +74,13 @@ snippet =?
 # Asignation switch
 snippet switch
 	switch ${1:day}
-		when ${2:Mon} then ${3:go work}
-		else ${4:go relax}
+	  when ${2:Mon} then ${3:go work}
+	  else ${4:go relax}
 
 # Asignation ##
 snippet ##
 	###
-		${1:comment}
+	  ${1:comment}
 	###
 
 ## Backbone.js coffee-script snippets
@@ -89,35 +89,35 @@ snippet ##
 snippet con
 	class App.Controllers.${1:classname} extends Backbone.Controller
 
-		routes:
-			'${2:route}': '${3:function}'
+	  routes:
+	    '${2:route}': '${3:function}'
 
-		$3: ->
-				${4:#function stuff here...}
+	  $3: ->
+	    ${4:#function stuff here...}
 
 ## model
 snippet mod
 	class App.Models.${1:name} extends Backbone.Model
 
-		${2}
+	  ${2}
 
 ## view
 snippet view
 	class App.Views.${1:name} extends Backbone.View
 
-		initialize: ->
-			@render()
+	  initialize: ->
+	    @render()
 
-		render: ->
-			$(this.el).html(JST.${2:template}(model: @model))
-			${3}
-			@
+	  render: ->
+	    $(this.el).html(JST.${2:template}(model: @model))
+	    ${3}
+	    @
 
 ## collection
 snippet col
 	class App.Collections.${1:name} extends Backbone.Collection
 
-		initialize: ->
+	  initialize: ->
 
-		url: '${2:url}'
+	    url: '${2:url}'
 
