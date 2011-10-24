@@ -6,6 +6,7 @@
 " Bundle: git://github.com/garbas/vim-snipmate.git
 " Bundle: git://github.com/honza/snipmate-snippets.git
 " Bundle: git://github.com/jnwhiteh/vim-golang.git
+" Bundle: git://github.com/kchmck/vim-coffee-script.git
 " Bundle: git://github.com/MarcWeber/vim-addon-mw-utils.git
 " Bundle: git://github.com/scrooloose/syntastic.git
 " Bundle: git://github.com/spiiph/vim-space.git
