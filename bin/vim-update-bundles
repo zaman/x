@@ -22,6 +22,7 @@
 
 require 'fileutils'
 require 'open-uri'
+require 'openssl'
 
 
 def dotvim *path
@@ -36,7 +37,7 @@ end
 
 
 def download_file url, file
-  open(url) do |r|
+  open(url, :ssl_verify_mode => OpenSSL::SSL::VERIFY_NONE) do |r|
     File.open(file, 'w') do |w|
       w.write(r.read)
     end

@@ -60,3 +60,4 @@ fi
 complete -o default -o nospace -F _git g
 # 'h' henüz olgunlaşmamış projeler için kısayol
 alias h='git commit -a -m hmm'
+alias gbp='git-buildpackage'
